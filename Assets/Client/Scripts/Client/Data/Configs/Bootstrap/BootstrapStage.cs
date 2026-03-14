@@ -4,7 +4,6 @@
     {
         None = 0,
         ConnectingToServer = 1,
-        PreparingGameSession = 2,
-        LoadingGameScene = 3
+        LoadingGameScene = 2
     }
 }

@@ -26,7 +26,6 @@ namespace Client.Scripts.Client
         public async UniTask RunAsync(CancellationToken ct)
         {
             await ProcessStage(BootstrapStage.ConnectingToServer, ConnectToServer, ct);
-            await ProcessStage(BootstrapStage.PreparingGameSession, PrepareGameSession, ct);
             await ProcessStage(BootstrapStage.LoadingGameScene, LoadGameScene, ct);
         }
 
@@ -46,11 +45,6 @@ namespace Client.Scripts.Client
         private async UniTask ConnectToServer(CancellationToken ct)
         {
             await _server.ConnectAsync(ct);
-        }
-
-        private async UniTask PrepareGameSession(CancellationToken ct)
-        {
-            await _server.StartGameAsync(ct);
         }
 
         private async UniTask LoadGameScene(CancellationToken ct)

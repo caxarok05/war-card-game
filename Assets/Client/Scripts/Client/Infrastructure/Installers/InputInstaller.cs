@@ -18,7 +18,7 @@ namespace Client.Scripts.Client
 #if UNITY_EDITOR
             _inputManager = new StandaloneInput();
 #elif UNITY_ANDROID || UNITY_IOS
-            _inputManager = new MobleInput();
+            _inputManager = new MobileInput();
 #else
             _inputManager = new StandaloneInput();
 #endif

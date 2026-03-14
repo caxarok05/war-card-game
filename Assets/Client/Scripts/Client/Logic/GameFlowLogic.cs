@@ -3,10 +3,11 @@ using System.Threading;
 using Client.Scripts.Shared;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace Client.Scripts.Client
 {
-    public sealed class GameFlowLogic : IDisposable
+    public sealed class GameFlowLogic : IInitializable, IDisposable
     {
         private readonly GameSessionLogic _gameSessionLogic;
         private readonly TurnRequestLogic _turnRequestLogic;
@@ -14,6 +15,8 @@ namespace Client.Scripts.Client
         private readonly TurnAnimationLogic _turnAnimationLogic;
         private readonly GameBoardPresenter _gameBoardPresenter;
 
+        private CancellationTokenSource _turnCancellation;
+        
         public GameFlowLogic(
             GameSessionLogic gameSessionLogic,
             TurnRequestLogic turnRequestLogic,
@@ -26,7 +29,10 @@ namespace Client.Scripts.Client
             _turnResolutionLogic = turnResolutionLogic;
             _turnAnimationLogic = turnAnimationLogic;
             _gameBoardPresenter = gameBoardPresenter;
+        }
 
+        public void Initialize()
+        {
             _gameBoardPresenter.InputPerformed += OnInputPerformed;
         }
 
@@ -55,12 +61,16 @@ namespace Client.Scripts.Client
 
                 // TODO: Show "Tap to draw" state in UI.
             }
+            catch (OperationCanceledException)
+            {
+                _gameSessionLogic.CompleteTurn();
+            }
             catch (Exception exception)
             {
                 _gameSessionLogic.CompleteTurn();
                 Debug.LogException(exception);
-
-                // TODO: Show initialization error state in UI.
+                
+                // TODO UI: Show initialization error state
             }
             finally
             {
@@ -106,12 +116,16 @@ namespace Client.Scripts.Client
 
                 // TODO: Show round result / war state in UI if needed.
             }
+            catch (OperationCanceledException)
+            {
+                _gameSessionLogic.CompleteTurn();
+            }
             catch (Exception exception)
             {
                 _gameSessionLogic.CompleteTurn();
                 Debug.LogException(exception);
-
-                // TODO: Show request error UI.
+                
+                // TODO UI: show request/server error popup
             }
             finally
             {
@@ -124,11 +138,21 @@ namespace Client.Scripts.Client
 
         private void OnInputPerformed()
         {
-            PlayNextTurnAsync(CancellationToken.None).Forget();
+            if (!_gameSessionLogic.CanPlayTurn())
+                return;
+
+            _turnCancellation?.Cancel();
+            _turnCancellation?.Dispose();
+            _turnCancellation = new CancellationTokenSource();
+
+            PlayNextTurnAsync(_turnCancellation.Token).Forget();
         }
 
         public void Dispose()
         {
+            _turnCancellation?.Cancel();
+            _turnCancellation?.Dispose();
+
             if (!_gameBoardPresenter.IsDestroyed)
             {
                 _gameBoardPresenter.InputPerformed -= OnInputPerformed;

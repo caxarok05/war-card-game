@@ -28,10 +28,10 @@ namespace Client.Scripts.Client
             {
                 await _gameFlowLogic.InitializeAsync(_cancellationTokenSource.Token);
             }
-            catch (System.OperationCanceledException)
+            catch (OperationCanceledException)
             {
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
                 Debug.LogException(exception);
                 // TODO: show initialization error UI.

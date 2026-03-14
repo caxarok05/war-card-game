@@ -17,11 +17,6 @@ namespace Client.Scripts.Client
             _input = input;
         }
 
-        private void Start()
-        {
-            _input.Init();
-        }
-
         private void Update()
         {
             if (!_isInputEnabled)

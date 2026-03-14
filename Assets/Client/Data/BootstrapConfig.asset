@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: BootstrapConfig
   m_EditorClassIdentifier: 
   _gameSceneName: GameScene
-  _stages: []
+  _stages:
+  - _stage: 1
+    _message: Connecting to server...
+    _progress: 0.5
+  - _stage: 2
+    _message: Loading game scene...
+    _progress: 1
