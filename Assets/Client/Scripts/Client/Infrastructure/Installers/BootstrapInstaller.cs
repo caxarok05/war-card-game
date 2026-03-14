@@ -13,7 +13,7 @@ namespace Client.Scripts.Client
 
             Container.Bind<BootstrapLoadingPresenter>().AsSingle();
             
-            Container.BindInterfacesAndSelfTo<GameBootstrapper>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ProjectBootstrapper>().AsSingle().NonLazy();
         }
     }
 }

@@ -6,12 +6,12 @@ using Zenject;
 
 namespace Client.Scripts.Client
 {
-    public sealed class GameBootstrapper : IInitializable, IDisposable
+    public sealed class ProjectBootstrapper : IInitializable, IDisposable
     {
         private readonly BootstrapLoadingPresenter _bootstrapPresenter;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public GameBootstrapper(BootstrapLoadingPresenter bootstrapPresenter)
+        public ProjectBootstrapper(BootstrapLoadingPresenter bootstrapPresenter)
         {
             _bootstrapPresenter = bootstrapPresenter;
         }
