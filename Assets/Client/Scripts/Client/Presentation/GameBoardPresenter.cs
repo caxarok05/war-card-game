@@ -9,12 +9,7 @@ namespace Client.Scripts.Client
         [field: SerializeField] public DeckPresenter OpponentDeckPresenter { get; private set; }
         [field: SerializeField] public TablePresenter TablePresenter { get; private set; }
         [field: SerializeField] public TapInputPresenter TapInputPresenter { get; private set; }
-
-        public event Action InputPerformed
-        {
-            add => TapInputPresenter.InputPerformed += value;
-            remove => TapInputPresenter.InputPerformed -= value;
-        }
+        
         
         public bool IsDestroyed => this == null;
 

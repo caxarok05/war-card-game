@@ -33,7 +33,7 @@ namespace Client.Scripts.Client
 
         public void Initialize()
         {
-            _gameBoardPresenter.InputPerformed += OnInputPerformed;
+            _gameBoardPresenter.TapInputPresenter.InputPerformed += OnInputPerformed;
         }
 
         public async UniTask InitializeAsync(CancellationToken cancellationToken)
@@ -155,7 +155,7 @@ namespace Client.Scripts.Client
 
             if (!_gameBoardPresenter.IsDestroyed)
             {
-                _gameBoardPresenter.InputPerformed -= OnInputPerformed;
+                _gameBoardPresenter.TapInputPresenter.InputPerformed -= OnInputPerformed;
             }
         }
     }
