@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d484d754dc9f43de925118cc535bc7ae, type: 3}
+  m_Name: CardSpriteConfig
+  m_EditorClassIdentifier: 
+  _cards:
+  - _suit: 2
+    _rank: 14
+    _sprite: {fileID: -637907174, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 2
+    _sprite: {fileID: -1537457305, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 3
+    _sprite: {fileID: 1340366504, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 4
+    _sprite: {fileID: 388564891, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 5
+    _sprite: {fileID: 653861625, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 6
+    _sprite: {fileID: 662293628, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 7
+    _sprite: {fileID: 1812861401, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 8
+    _sprite: {fileID: -1174188318, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 9
+    _sprite: {fileID: 318123539, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 10
+    _sprite: {fileID: 1856460565, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 11
+    _sprite: {fileID: -1722194646, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 12
+    _sprite: {fileID: -2004617890, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 2
+    _rank: 13
+    _sprite: {fileID: -671110048, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 14
+    _sprite: {fileID: -1389406018, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 2
+    _sprite: {fileID: -1126930562, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 3
+    _sprite: {fileID: -569785629, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 4
+    _sprite: {fileID: 1095444533, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 5
+    _sprite: {fileID: -288300772, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 6
+    _sprite: {fileID: -352522635, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 7
+    _sprite: {fileID: 1717493511, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 8
+    _sprite: {fileID: 728841483, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 9
+    _sprite: {fileID: -134901475, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 10
+    _sprite: {fileID: -1794475369, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 11
+    _sprite: {fileID: -545990984, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 12
+    _sprite: {fileID: 1918438216, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 1
+    _rank: 13
+    _sprite: {fileID: -542275211, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 14
+    _sprite: {fileID: -1039571253, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 2
+    _sprite: {fileID: 1643603665, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 3
+    _sprite: {fileID: 1478120680, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 4
+    _sprite: {fileID: -1242666127, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 5
+    _sprite: {fileID: 860002875, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 6
+    _sprite: {fileID: 722917044, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 7
+    _sprite: {fileID: 1381689480, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 8
+    _sprite: {fileID: -728155254, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 9
+    _sprite: {fileID: -894842382, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 10
+    _sprite: {fileID: 1970926129, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 11
+    _sprite: {fileID: 2009464365, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 12
+    _sprite: {fileID: 1132932027, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 0
+    _rank: 13
+    _sprite: {fileID: 400036609, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 14
+    _sprite: {fileID: -1708794368, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 2
+    _sprite: {fileID: -1721681321, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 3
+    _sprite: {fileID: 2127192512, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 4
+    _sprite: {fileID: -435288109, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 5
+    _sprite: {fileID: -513962519, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 6
+    _sprite: {fileID: -749616970, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 7
+    _sprite: {fileID: -1693930427, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 8
+    _sprite: {fileID: 895550479, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 9
+    _sprite: {fileID: -808108724, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 10
+    _sprite: {fileID: 1643737220, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 11
+    _sprite: {fileID: -52749468, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 12
+    _sprite: {fileID: 384442525, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}
+  - _suit: 3
+    _rank: 13
+    _sprite: {fileID: 1383436980, guid: adaed5affe0e8414baed6dc5c9a71701, type: 3}

@@ -98,7 +98,7 @@ namespace Client.Scripts.Client
                 DrawResponse response = await _turnRequestLogic.DrawAsync(cancellationToken);
                 ResolvedTurnData resolvedTurnData = _turnResolutionLogic.Resolve(response);
 
-                await _turnAnimationLogic.PlayAsync(response, cancellationToken);
+                await _turnAnimationLogic.PlayAsync(resolvedTurnData, cancellationToken);
 
                 _gameBoardPresenter.UpdateDeckCounts(
                     response.PlayerTotalCardCount,

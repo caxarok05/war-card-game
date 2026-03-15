@@ -10,6 +10,7 @@ namespace Client.Scripts.Client
 
             return new ResolvedTurnData(
                 response,
+                response.RoundOutcome,
                 response.IsWar,
                 isGameOver,
                 response.GameOutcome);

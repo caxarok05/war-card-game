@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725d270606e84cdcac72982d51d2a71f, type: 3}
+  m_Name: AnimationConfig
+  m_EditorClassIdentifier: 
+  RevealMoveDuration: 0.25
+  DelayBetweenRevealCards: 0.06
+  RevealPauseSeconds: 0.6
+  CollectMoveDuration: 0.45
+  CollectArcHeight: 0.9
+  CollectSpinAngle: 360
+  DelayBetweenCollectCards: 0.03
+  CollectPauseSeconds: 0.15
+  DeckPunchScale: 0.1
+  DeckPunchDuration: 0.25
+  CollectSortingOffset: 1000
