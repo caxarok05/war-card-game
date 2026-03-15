@@ -9,12 +9,20 @@ namespace Client.Scripts.Client
 {
     public sealed class TurnAnimationLogic
     {
+        private sealed class TableCardData
+        {
+            public CardPresenter Presenter;
+            public PlayerId Owner;
+            public int SequenceIndex;
+            public int VisualIndex;
+        }
+
         private readonly CustomPool<CardPresenter> _cardPool;
         private readonly GameBoardPresenter _gameBoardPresenter;
         private readonly TableLayoutLogic _tableLayoutLogic;
         private readonly ConfigProvider _configProvider;
 
-        private readonly List<CardPresenter> _activeCards = new();
+        private readonly List<TableCardData> _activeCards = new();
 
         public TurnAnimationLogic(
             CustomPool<CardPresenter> cardPool,
@@ -41,7 +49,7 @@ namespace Client.Scripts.Client
             {
                 await PlayWarCameraPunchAsync(cancellationToken);
             }
-            
+
             await UniTask.Delay(
                 (int)(_configProvider.AnimationConfig.RevealPauseSeconds * 1000f),
                 cancellationToken: cancellationToken);
@@ -55,43 +63,52 @@ namespace Client.Scripts.Client
             DrawResponse response,
             CancellationToken cancellationToken)
         {
-            int playerIndex = 0;
-            int opponentIndex = 0;
+            int playerSequenceIndex = 0;
+            int opponentSequenceIndex = 0;
 
             for (int i = 0; i < response.RevealedCards.Count; i++)
             {
                 CardRevealData reveal = response.RevealedCards[i];
 
-                int tableIndex;
+                int sequenceIndex;
                 DeckPresenter deckPresenter;
 
                 if (reveal.Owner == PlayerId.Player)
                 {
-                    tableIndex = playerIndex;
-                    playerIndex++;
+                    sequenceIndex = playerSequenceIndex;
+                    playerSequenceIndex++;
                     deckPresenter = _gameBoardPresenter.PlayerDeckPresenter;
                 }
                 else
                 {
-                    tableIndex = opponentIndex;
-                    opponentIndex++;
+                    sequenceIndex = opponentSequenceIndex;
+                    opponentSequenceIndex++;
                     deckPresenter = _gameBoardPresenter.OpponentDeckPresenter;
                 }
 
-                CardPresenter cardPresenter = _cardPool.Get();
-                _activeCards.Add(cardPresenter);
+                if (IsNextWarStepStart(sequenceIndex))
+                {
+                    await CollapseAllPreviousCardsToZeroAsync(reveal.Owner, cancellationToken);
+                }
 
+                int visualIndex = GetVisualIndex(sequenceIndex);
+
+                CardPresenter cardPresenter = _cardPool.Get();
                 cardPresenter.gameObject.SetActive(true);
+
                 cardPresenter.SetPositionAndRotation(
                     deckPresenter.GetSpawnPoint(),
                     deckPresenter.GetSpawnRotation());
 
                 cardPresenter.SetSortingOrder(
-                    _tableLayoutLogic.GetSortingOrder(reveal.Owner, tableIndex));
+                    _tableLayoutLogic.GetSortingOrder(reveal.Owner, sequenceIndex));
 
                 if (reveal.IsFaceUp)
                 {
-                    var sprite = _configProvider.CardSpriteConfig.GetCardSprite(reveal.Card.Suit, reveal.Card.Rank);
+                    var sprite = _configProvider.CardSpriteConfig.GetCardSprite(
+                        reveal.Card.Suit,
+                        reveal.Card.Rank);
+
                     cardPresenter.ShowFront(sprite);
                 }
                 else
@@ -99,14 +116,24 @@ namespace Client.Scripts.Client
                     cardPresenter.ShowBack();
                 }
 
+                TableCardData cardData = new TableCardData
+                {
+                    Presenter = cardPresenter,
+                    Owner = reveal.Owner,
+                    SequenceIndex = sequenceIndex,
+                    VisualIndex = visualIndex
+                };
+
+                _activeCards.Add(cardData);
+
                 await cardPresenter.MoveToAsync(
                     _tableLayoutLogic.GetCardPosition(
                         reveal.Owner,
-                        tableIndex,
+                        visualIndex,
                         _gameBoardPresenter.TablePresenter),
                     _tableLayoutLogic.GetCardRotation(
                         reveal.Owner,
-                        tableIndex,
+                        visualIndex,
                         _gameBoardPresenter.TablePresenter),
                     _configProvider.AnimationConfig.RevealMoveDuration,
                     cancellationToken);
@@ -115,6 +142,64 @@ namespace Client.Scripts.Client
                     (int)(_configProvider.AnimationConfig.DelayBetweenRevealCards * 1000f),
                     cancellationToken: cancellationToken);
             }
+        }
+
+        private bool IsNextWarStepStart(int sequenceIndex)
+        {
+            return sequenceIndex > 4 && (sequenceIndex - 5) % 4 == 0;
+        }
+
+        private int GetVisualIndex(int sequenceIndex)
+        {
+            if (sequenceIndex == 0)
+            {
+                return 0;
+            }
+
+            if (sequenceIndex >= 1 && sequenceIndex <= 4)
+            {
+                return sequenceIndex;
+            }
+
+            int offsetInsideWarStep = (sequenceIndex - 5) % 4;
+            return 1 + offsetInsideWarStep;
+        }
+
+        private async UniTask CollapseAllPreviousCardsToZeroAsync(
+            PlayerId owner,
+            CancellationToken cancellationToken)
+        {
+            List<UniTask> tasks = new List<UniTask>();
+
+            for (int i = 0; i < _activeCards.Count; i++)
+            {
+                TableCardData cardData = _activeCards[i];
+
+                if (cardData.Owner != owner)
+                {
+                    continue;
+                }
+
+                cardData.VisualIndex = 0;
+
+                Vector3 targetPosition = _tableLayoutLogic.GetCardPosition(
+                    cardData.Owner,
+                    0,
+                    _gameBoardPresenter.TablePresenter);
+
+                Quaternion targetRotation = _tableLayoutLogic.GetCardRotation(
+                    cardData.Owner,
+                    0,
+                    _gameBoardPresenter.TablePresenter);
+
+                tasks.Add(cardData.Presenter.MoveToAsync(
+                    targetPosition,
+                    targetRotation,
+                    _configProvider.AnimationConfig.RevealMoveDuration * 0.5f,
+                    cancellationToken));
+            }
+
+            await UniTask.WhenAll(tasks);
         }
 
         private async UniTask PlayCollectAsync(
@@ -131,7 +216,7 @@ namespace Client.Scripts.Client
 
             for (int i = 0; i < _activeCards.Count; i++)
             {
-                CardPresenter cardPresenter = _activeCards[i];
+                CardPresenter cardPresenter = _activeCards[i].Presenter;
 
                 cardPresenter.ShowBack();
                 cardPresenter.SetSortingOrder(1000 + i);
@@ -156,7 +241,8 @@ namespace Client.Scripts.Client
                 cancellationToken: cancellationToken);
         }
 
-        private async UniTask PlayWarCameraPunchAsync(CancellationToken cancellationToken)
+        private async UniTask PlayWarCameraPunchAsync(
+            CancellationToken cancellationToken)
         {
             Camera mainCamera = Camera.main;
             if (mainCamera == null)
@@ -174,17 +260,16 @@ namespace Client.Scripts.Client
 
             await punchTween.ToUniTask(cancellationToken: cancellationToken);
         }
-        
-        private DeckPresenter GetWinnerDeckPresenter(RoundOutcomeType roundOutcome)
+
+        private DeckPresenter GetWinnerDeckPresenter(
+            RoundOutcomeType roundOutcome)
         {
             switch (roundOutcome)
             {
                 case RoundOutcomeType.PlayerWon:
                     return _gameBoardPresenter.PlayerDeckPresenter;
-
                 case RoundOutcomeType.OpponentWon:
                     return _gameBoardPresenter.OpponentDeckPresenter;
-
                 default:
                     return null;
             }
@@ -194,7 +279,7 @@ namespace Client.Scripts.Client
         {
             for (int i = 0; i < _activeCards.Count; i++)
             {
-                _activeCards[i].ResetState();
+                _activeCards[i].Presenter.ResetState();
             }
 
             _activeCards.Clear();

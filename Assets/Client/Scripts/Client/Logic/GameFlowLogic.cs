@@ -44,7 +44,6 @@ namespace Client.Scripts.Client
             }
 
             _gameSessionLogic.BeginInitialization();
-            _gameBoardPresenter.ResetBoard();
             _gameBoardPresenter.SetInputEnabled(false);
 
             try

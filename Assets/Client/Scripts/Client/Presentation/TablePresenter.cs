@@ -27,10 +27,5 @@ namespace Client.Scripts.Client
         {
             return _opponentCardPoints[Mathf.Clamp(index, 0, _opponentCardPoints.Count - 1)].rotation;
         }
-
-        public void ResetTable()
-        {
-            // table cleanup is driven by logic through pool release
-        }
     }
 }

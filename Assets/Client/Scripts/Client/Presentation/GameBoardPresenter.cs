@@ -13,11 +13,6 @@ namespace Client.Scripts.Client
         
         public bool IsDestroyed => this == null;
 
-        public void ResetBoard()
-        {
-            TablePresenter.ResetTable();
-        }
-
         public void UpdateDeckCounts(int playerCount, int opponentCount)
         {
             PlayerDeckPresenter.SetCount(playerCount);

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Client.Scripts.Shared;
+﻿using Client.Scripts.Shared;
 using UnityEngine;
 
 namespace Client.Scripts.Client
@@ -8,35 +7,35 @@ namespace Client.Scripts.Client
     {
         public Vector3 GetCardPosition(
             PlayerId owner,
-            int index,
+            int visualIndex,
             TablePresenter tablePresenter)
         {
             if (owner == PlayerId.Player)
             {
-                return tablePresenter.GetPlayerCardPoint(index);
+                return tablePresenter.GetPlayerCardPoint(visualIndex);
             }
 
-            return tablePresenter.GetOpponentCardPoint(index);
+            return tablePresenter.GetOpponentCardPoint(visualIndex);
         }
 
         public Quaternion GetCardRotation(
             PlayerId owner,
-            int index,
+            int visualIndex,
             TablePresenter tablePresenter)
         {
             if (owner == PlayerId.Player)
             {
-                return tablePresenter.GetPlayerCardRotation(index);
+                return tablePresenter.GetPlayerCardRotation(visualIndex);
             }
 
-            return tablePresenter.GetOpponentCardRotation(index);
+            return tablePresenter.GetOpponentCardRotation(visualIndex);
         }
 
-        public int GetSortingOrder(PlayerId owner, int index)
+        public int GetSortingOrder(PlayerId owner, int sequenceIndex)
         {
             return owner == PlayerId.Player
-                ? 100 + index
-                : 200 + index;
+                ? 100 + sequenceIndex
+                : 200 + sequenceIndex;
         }
     }
 }
