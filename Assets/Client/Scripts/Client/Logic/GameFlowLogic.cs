@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Threading;
 using Client.Scripts.Shared;
 using Cysharp.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace Client.Scripts.Client
         public event Action OnInitializationFinished;
         public event Action<string> OnStatusTextChanged;
         public event Action OnStatusTextHidden;
-        
+
         private readonly GameSessionLogic _gameSessionLogic;
         private readonly TurnRequestLogic _turnRequestLogic;
         private readonly TurnResolutionLogic _turnResolutionLogic;
@@ -24,13 +24,13 @@ namespace Client.Scripts.Client
         private readonly ConfigProvider _configProvider;
 
         private CancellationTokenSource _turnCancellation;
-        
+
         public GameFlowLogic(
             GameSessionLogic gameSessionLogic,
             TurnRequestLogic turnRequestLogic,
             TurnResolutionLogic turnResolutionLogic,
             TurnAnimationLogic turnAnimationLogic,
-            GameBoardPresenter gameBoardPresenter, 
+            GameBoardPresenter gameBoardPresenter,
             ConfigProvider configProvider)
         {
             _gameSessionLogic = gameSessionLogic;
@@ -55,10 +55,10 @@ namespace Client.Scripts.Client
 
             _gameSessionLogic.BeginInitialization();
             _gameBoardPresenter.SetInputEnabled(false);
- 
+
             OnInitializationStarted?.Invoke();
             OnStatusTextHidden?.Invoke();
-            
+
             try
             {
                 StartGameResponse response = await _turnRequestLogic.StartGameAsync(cancellationToken);
@@ -82,7 +82,7 @@ namespace Client.Scripts.Client
             {
                 _gameSessionLogic.CompleteTurn();
                 Debug.LogException(exception);
-  
+
                 OnInitializationFinished?.Invoke();
                 OnExceptionHappened?.Invoke(_configProvider.UIConfig.InitalizeFailedText);
             }
@@ -106,7 +106,7 @@ namespace Client.Scripts.Client
             _gameBoardPresenter.SetInputEnabled(false);
 
             OnStatusTextChanged?.Invoke(_configProvider.UIConfig.RequestingServerText);
-            
+
             try
             {
                 DrawResponse response = await _turnRequestLogic.DrawAsync(cancellationToken);
@@ -117,7 +117,7 @@ namespace Client.Scripts.Client
                 _gameBoardPresenter.UpdateDeckCounts(
                     response.PlayerTotalCardCount,
                     response.OpponentTotalCardCount);
-                
+
                 if (resolvedTurnData.IsGameOver)
                 {
                     _gameSessionLogic.CompleteGame();
@@ -170,6 +170,66 @@ namespace Client.Scripts.Client
         {
             _turnCancellation?.Cancel();
             _turnCancellation?.Dispose();
+
+            if (!_gameBoardPresenter.IsDestroyed)
+            {
+                _gameBoardPresenter.TapInputPresenter.InputPerformed -= OnInputPerformed;
+            }
+        }
+    }
+}*/
+
+
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Zenject;
+
+namespace Client.Scripts.Client
+{
+    public sealed class GameFlowLogic : IInitializable, IDisposable
+    {
+        private readonly GameBoardPresenter _gameBoardPresenter;
+        private readonly GameSessionLogic _gameSessionLogic;
+        private readonly GameTurnCoordinator _turnCoordinator;
+
+        private CancellationTokenSource _lifetimeCts;
+
+        public GameFlowLogic(
+            GameBoardPresenter gameBoardPresenter,
+            GameSessionLogic gameSessionLogic,
+            GameTurnCoordinator turnCoordinator)
+        {
+            _gameBoardPresenter = gameBoardPresenter;
+            _gameSessionLogic = gameSessionLogic;
+            _turnCoordinator = turnCoordinator;
+        }
+
+        public void Initialize()
+        {
+            _lifetimeCts = new CancellationTokenSource();
+            _gameBoardPresenter.TapInputPresenter.InputPerformed += OnInputPerformed;
+        }
+
+        public UniTask InitializeAsync()
+        {
+            return _turnCoordinator.InitializeAsync(_lifetimeCts.Token);
+        }
+
+        private void OnInputPerformed()
+        {
+            if (!_gameSessionLogic.CanPlayTurn())
+            {
+                return;
+            }
+
+            _turnCoordinator.PlayNextTurnAsync(_lifetimeCts.Token).Forget();
+        }
+
+        public void Dispose()
+        {
+            _lifetimeCts?.Cancel();
+            _lifetimeCts?.Dispose();
 
             if (!_gameBoardPresenter.IsDestroyed)
             {

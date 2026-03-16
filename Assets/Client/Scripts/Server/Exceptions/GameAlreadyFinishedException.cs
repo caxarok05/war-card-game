@@ -1,4 +1,4 @@
-﻿namespace Client.Scripts.Shared
+﻿namespace Client.Scripts.Server
 {
     public sealed class GameAlreadyFinishedException : FakeServerException
     {

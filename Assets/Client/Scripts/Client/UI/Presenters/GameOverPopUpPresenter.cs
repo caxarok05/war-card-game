@@ -8,29 +8,29 @@ namespace Client.Scripts.Client
     public class GameOverPopUpPresenter : IInitializable, IDisposable
     {
         private readonly GameOverPopUpView _view;
-        private readonly GameFlowLogic  _gameFlowLogic;
+        private readonly GameFlowUiFacade _flowUiFacade;
         private readonly ConfigProvider _configProvider;
 
         public GameOverPopUpPresenter(
             GameOverPopUpView view, 
             ConfigProvider configProvider, 
-            GameFlowLogic gameFlowLogic)
+            GameFlowUiFacade flowUiFacade)
         {
             _view = view;
             _configProvider = configProvider;
-            _gameFlowLogic = gameFlowLogic;
+            _flowUiFacade = flowUiFacade;
         }
 
         public void Initialize()
         {
             _view.NextButtonClicked += HandleNextButtonClick;
-            _gameFlowLogic.OnGameOver += Show;
+            _flowUiFacade.OnGameOver += Show;
         }
 
         public void Dispose()
         {
             _view.NextButtonClicked -= HandleNextButtonClick;
-            _gameFlowLogic.OnGameOver -= Show;
+            _flowUiFacade.OnGameOver -= Show;
         }
 
         public void Show(GameOutcomeType gameOutcomeType)
@@ -54,7 +54,7 @@ namespace Client.Scripts.Client
 
         private void HandleNextButtonClick()
         {
-            SceneManager.LoadScene(_configProvider.BootstrapConfig.BootstrapSceneName);
+            SceneManager.LoadScene(_configProvider.BootstrapConfig.BootstrapSceneName); //in normal project that should be done through service 
         }
     }
 }

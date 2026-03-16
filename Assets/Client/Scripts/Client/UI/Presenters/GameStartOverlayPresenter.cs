@@ -6,26 +6,26 @@ namespace Client.Scripts.Client
     public class GameStartOverlayPresenter : IInitializable, IDisposable
     {
         private readonly GameStartOverlayView _view;
-        private readonly GameFlowLogic _gameFlowLogic;
+        private readonly GameFlowUiFacade _flowUiFacade;
 
         public GameStartOverlayPresenter(
             GameStartOverlayView view, 
-            GameFlowLogic gameFlowLogic)
+            GameFlowUiFacade flowUiFacade)
         {
             _view = view;
-            _gameFlowLogic = gameFlowLogic;
+            _flowUiFacade = flowUiFacade;
         }
 
         public void Initialize()
         {
-            _gameFlowLogic.OnInitializationStarted += Show;
-            _gameFlowLogic.OnInitializationFinished += Hide;
+            _flowUiFacade.OnInitializationStarted += Show;
+            _flowUiFacade.OnInitializationFinished += Hide;
         }
 
         public void Dispose()
         {
-            _gameFlowLogic.OnInitializationStarted -= Show;
-            _gameFlowLogic.OnInitializationFinished -= Hide;
+            _flowUiFacade.OnInitializationStarted -= Show;
+            _flowUiFacade.OnInitializationFinished -= Hide;
         }
         
         private void Show()

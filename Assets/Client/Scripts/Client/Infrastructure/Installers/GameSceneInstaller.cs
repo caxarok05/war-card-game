@@ -40,6 +40,8 @@ namespace Client.Scripts.Client
             Container.Bind<TurnResolutionLogic>().AsSingle();
             Container.Bind<TableLayoutLogic>().AsSingle();
             Container.Bind<TurnAnimationLogic>().AsSingle();
+            Container.Bind<GameFlowUiFacade>().AsSingle();
+            Container.Bind<GameTurnCoordinator>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameFlowLogic>().AsSingle();
         }
 

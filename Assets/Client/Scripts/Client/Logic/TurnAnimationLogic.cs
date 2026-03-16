@@ -26,6 +26,8 @@ namespace Client.Scripts.Client
         private readonly ConfigProvider _configProvider;
 
         private readonly List<TableCardData> _activeCards = new();
+        private readonly List<UniTask> _moveTasksBuffer = new(16);
+        private readonly List<UniTask> _collectTasksBuffer = new(32);
 
         public TurnAnimationLogic(
             CustomPool<CardPresenter> cardPool,
@@ -43,8 +45,7 @@ namespace Client.Scripts.Client
             ResolvedTurnData resolvedTurnData,
             CancellationToken cancellationToken)
         {
-            _cardPool.ReleaseAll();
-            _activeCards.Clear();
+            SkipToFinalState();
 
             await PlayRevealAsync(resolvedTurnData.Response, cancellationToken);
 
@@ -60,7 +61,20 @@ namespace Client.Scripts.Client
 
             await PlayCollectAsync(resolvedTurnData.RoundOutcome, cancellationToken);
 
-            ClearActiveCards();
+            SkipToFinalState();
+        }
+        
+        public void SkipToFinalState()
+        {
+            for (int i = 0; i < _activeCards.Count; i++)
+            {
+                _activeCards[i].Presenter.ResetState();
+                _cardPool.Release(_activeCards[i].Presenter);
+            }
+
+            _activeCards.Clear();
+            _moveTasksBuffer.Clear();
+            _collectTasksBuffer.Clear();
         }
 
         private async UniTask PlayRevealAsync(
@@ -98,7 +112,6 @@ namespace Client.Scripts.Client
                 int visualIndex = GetVisualIndex(sequenceIndex);
 
                 CardPresenter cardPresenter = _cardPool.Get();
-                cardPresenter.gameObject.SetActive(true);
 
                 cardPresenter.SetPositionAndRotation(
                     deckPresenter.GetSpawnPoint(),
@@ -109,7 +122,7 @@ namespace Client.Scripts.Client
 
                 if (reveal.IsFaceUp)
                 {
-                    var sprite = _configProvider.CardSpriteConfig.GetCardSprite(
+                    Sprite sprite = _configProvider.CardSpriteConfig.GetCardSprite(
                         reveal.Card.Suit,
                         reveal.Card.Rank);
 
@@ -173,7 +186,7 @@ namespace Client.Scripts.Client
             PlayerId owner,
             CancellationToken cancellationToken)
         {
-            List<UniTask> tasks = new List<UniTask>();
+            _moveTasksBuffer.Clear();
 
             for (int i = 0; i < _activeCards.Count; i++)
             {
@@ -196,14 +209,17 @@ namespace Client.Scripts.Client
                     0,
                     _gameBoardPresenter.TablePresenter);
 
-                tasks.Add(cardData.Presenter.MoveToAsync(
+                _moveTasksBuffer.Add(cardData.Presenter.MoveToAsync(
                     targetPosition,
                     targetRotation,
                     _configProvider.AnimationConfig.RevealMoveDuration * 0.5f,
                     cancellationToken));
             }
 
-            await UniTask.WhenAll(tasks);
+            if (_moveTasksBuffer.Count > 0)
+            {
+                await UniTask.WhenAll(_moveTasksBuffer);
+            }
         }
 
         private async UniTask PlayCollectAsync(
@@ -216,7 +232,7 @@ namespace Client.Scripts.Client
                 return;
             }
 
-            List<UniTask> collectTasks = new List<UniTask>(_activeCards.Count);
+            _collectTasksBuffer.Clear();
 
             for (int i = 0; i < _activeCards.Count; i++)
             {
@@ -229,7 +245,7 @@ namespace Client.Scripts.Client
                     ? _configProvider.AnimationConfig.CollectSpinAngle
                     : -_configProvider.AnimationConfig.CollectSpinAngle;
 
-                collectTasks.Add(cardPresenter.FlyToDeckAsync(
+                _collectTasksBuffer.Add(cardPresenter.FlyToDeckAsync(
                     targetDeckPresenter.GetSpawnPoint(),
                     targetDeckPresenter.GetSpawnRotation(),
                     _configProvider.AnimationConfig.CollectMoveDuration,
@@ -238,7 +254,10 @@ namespace Client.Scripts.Client
                     cancellationToken));
             }
 
-            await UniTask.WhenAll(collectTasks);
+            if (_collectTasksBuffer.Count > 0)
+            {
+                await UniTask.WhenAll(_collectTasksBuffer);
+            }
 
             await UniTask.Delay(
                 (int)(_configProvider.AnimationConfig.CollectPauseSeconds * 1000f),
@@ -277,16 +296,6 @@ namespace Client.Scripts.Client
                 default:
                     return null;
             }
-        }
-
-        private void ClearActiveCards()
-        {
-            for (int i = 0; i < _activeCards.Count; i++)
-            {
-                _activeCards[i].Presenter.ResetState();
-            }
-
-            _activeCards.Clear();
         }
     }
 }

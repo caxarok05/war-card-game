@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Client.Scripts.Shared 
+namespace Client.Scripts.Server 
 {
     public class FakeServerException : Exception
     {

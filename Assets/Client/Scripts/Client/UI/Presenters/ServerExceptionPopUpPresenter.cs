@@ -6,23 +6,23 @@ namespace Client.Scripts.Client
     public class ServerExceptionPopUpPresenter : IInitializable, IDisposable
     {
         private readonly ServerExceptionPopUpView _view;
-        private readonly GameFlowLogic _gameFlowLogic;
+        private readonly GameFlowUiFacade _flowUiFacade;
 
-        public ServerExceptionPopUpPresenter(ServerExceptionPopUpView view, GameFlowLogic gameFlowLogic)
+        public ServerExceptionPopUpPresenter(ServerExceptionPopUpView view, GameFlowUiFacade flowUiFacade)
         {
             _view = view;
-            _gameFlowLogic = gameFlowLogic;
+            _flowUiFacade = flowUiFacade;
         }
 
         public void Initialize()
         {
-            _gameFlowLogic.OnExceptionHappened += HandleShowException;
+            _flowUiFacade.OnExceptionHappened += HandleShowException;
             _view.OnCloseClicked += HandleCloseClicked;
         }
 
         public void Dispose()
         {
-            _gameFlowLogic.OnExceptionHappened -= HandleShowException;
+            _flowUiFacade.OnExceptionHappened -= HandleShowException;
             _view.OnCloseClicked -= HandleCloseClicked;
         }
 

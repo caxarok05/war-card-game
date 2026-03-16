@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
 namespace Client.Scripts.Client
 {
-    public sealed class GameSceneBootstrapper : IInitializable, IDisposable
+    public sealed class GameSceneBootstrapper : IInitializable
     {
         private GameFlowLogic _gameFlowLogic;
-        private CancellationTokenSource _cancellationTokenSource;
 
         public GameSceneBootstrapper(GameFlowLogic gameFlowLogic)
         {
@@ -18,7 +16,6 @@ namespace Client.Scripts.Client
         
         public void Initialize()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
             RunAsync().Forget();
         }
 
@@ -26,7 +23,7 @@ namespace Client.Scripts.Client
         {
             try
             {
-                await _gameFlowLogic.InitializeAsync(_cancellationTokenSource.Token);
+                await _gameFlowLogic.InitializeAsync();
             }
             catch (OperationCanceledException)
             {
@@ -34,14 +31,7 @@ namespace Client.Scripts.Client
             catch (Exception exception)
             {
                 Debug.LogException(exception);
-                // TODO: show initialization error UI.
             }
-        }
-
-        public void Dispose()
-        {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
         }
     }
 }

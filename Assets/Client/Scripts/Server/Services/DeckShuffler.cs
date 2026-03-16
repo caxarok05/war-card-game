@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Client.Scripts.Shared;
 
-namespace Client.Scripts.Shared
+namespace Client.Scripts.Server
 {
     public sealed class DeckShuffler
     {

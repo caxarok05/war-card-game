@@ -2,7 +2,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Client.Scripts.Client
+namespace Client.Scripts.Server
 {
     public sealed class ServerInstaller : MonoInstaller
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
+using Client.Scripts.Shared;
 using Cysharp.Threading.Tasks;
 
-namespace Client.Scripts.Shared
+namespace Client.Scripts.Server
 {
     public sealed class FakeServerRequestSimulator
     {

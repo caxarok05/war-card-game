@@ -17,8 +17,6 @@ namespace Client.Scripts.Client
         {
             PlayerDeckPresenter.SetCount(playerCount);
             OpponentDeckPresenter.SetCount(opponentCount);
-
-            // TODO: update UI HUD counters if needed.
         }
 
         public void SetInputEnabled(bool isEnabled)

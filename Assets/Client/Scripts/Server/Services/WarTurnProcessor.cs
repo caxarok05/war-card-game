@@ -1,4 +1,6 @@
-﻿namespace Client.Scripts.Shared
+﻿using Client.Scripts.Shared;
+
+namespace Client.Scripts.Server
 {
     public sealed class WarTurnProcessor
     {

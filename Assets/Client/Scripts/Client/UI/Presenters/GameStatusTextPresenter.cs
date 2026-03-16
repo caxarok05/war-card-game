@@ -6,23 +6,23 @@ namespace Client.Scripts.Client
     public class GameStatusTextPresenter : IInitializable, IDisposable
     {
         private readonly GameStatusTextView _view;
-        private readonly GameFlowLogic _gameFlowLogic;
+        private readonly GameFlowUiFacade _flowUiFacade;
 
-        public GameStatusTextPresenter(GameStatusTextView view, GameFlowLogic gameFlowLogic)
+        public GameStatusTextPresenter(GameStatusTextView view, GameFlowUiFacade flowUiFacade)
         {
             _view = view;
-            _gameFlowLogic = gameFlowLogic;
+            _flowUiFacade = flowUiFacade;
         }
 
         public void Initialize()
         {
-            _gameFlowLogic.OnStatusTextChanged += TextChanged;
-            _gameFlowLogic.OnStatusTextHidden += Hide;
+            _flowUiFacade.OnStatusTextChanged += TextChanged;
+            _flowUiFacade.OnStatusTextHidden += Hide;
         }
         public void Dispose()
         {
-            _gameFlowLogic.OnStatusTextChanged -= TextChanged;
-            _gameFlowLogic.OnStatusTextHidden -= Hide;
+            _flowUiFacade.OnStatusTextChanged -= TextChanged;
+            _flowUiFacade.OnStatusTextHidden -= Hide;
         }
 
         private void TextChanged(string text)

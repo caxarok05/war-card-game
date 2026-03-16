@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Client.Scripts.Client
@@ -9,56 +8,67 @@ namespace Client.Scripts.Client
         private readonly IPoolFactory<T> _poolFactory;
         private readonly List<T> _objects;
 
+        public int Count => _objects.Count;
+
         public CustomPool(IPoolFactory<T> poolFactory, int prewarmObjects)
         {
             _poolFactory = poolFactory;
-            _objects = new List<T>();
+            _objects = new List<T>(prewarmObjects);
 
             _poolFactory.CreateParent();
-
-            for (int i = 0; i < prewarmObjects; i++)
-            {
-                var obj = _poolFactory.CreatePrefab();
-                obj.gameObject.SetActive(false);
-                _objects.Add(obj);
-            }
+            Prewarm(prewarmObjects);
         }
 
         public T Get()
         {
-            T obj;
-            if (_objects.Count == 0)
+            for (int i = 0; i < _objects.Count; i++)
             {
-                Debug.LogError("Not find active object in pool.");
-                return default;
+                T obj = _objects[i];
+                if (!obj.gameObject.activeSelf)
+                {
+                    obj.gameObject.SetActive(true);
+                    return obj;
+                }
             }
 
-            if (_objects.FirstOrDefault(x => !x.isActiveAndEnabled) == null)
-            {
-                obj = _objects.FirstOrDefault(x => x.isActiveAndEnabled);
-                Debug.LogError("Reset last object in pool");
-            }
-            else
-                obj = _objects.FirstOrDefault(x => !x.isActiveAndEnabled) ?? Create();
-
-            obj.gameObject.SetActive(true);
-            return obj;
+            T created = Create();
+            created.gameObject.SetActive(true);
+            return created;
         }
 
         public void Release(T obj)
         {
+            if (obj == null)
+            {
+                return;
+            }
+
             obj.gameObject.SetActive(false);
         }
 
         public void ReleaseAll()
         {
-            foreach (var obj in _objects)
-                obj.gameObject.SetActive(false);
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                if (_objects[i] != null)
+                {
+                    _objects[i].gameObject.SetActive(false);
+                }
+            }
         }
-        
+
+        private void Prewarm(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                T created = Create();
+                created.gameObject.SetActive(false);
+            }
+        }
+
         private T Create()
         {
-            var obj = _poolFactory.CreatePrefab();
+            T obj = _poolFactory.CreatePrefab();
             _objects.Add(obj);
             return obj;
         }

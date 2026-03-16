@@ -49,7 +49,7 @@ namespace Client.Scripts.Client
         private async UniTask LoadGameScene(CancellationToken ct)
         {
             AsyncOperation operation =
-                SceneManager.LoadSceneAsync(_configProvider.BootstrapConfig.GameSceneName);
+                SceneManager.LoadSceneAsync(_configProvider.BootstrapConfig.GameSceneName); //in normal project that should be done through service 
 
             while (!operation.isDone)
             {
