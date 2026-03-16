@@ -7,10 +7,17 @@ namespace Client.Scripts.Client
     {
         [SerializeField] private GameBoardPresenter _gameBoardPresenter;
         
+        [SerializeField] private GameOverPopUpView _gameOverPopUpView;
+        [SerializeField] private GameStartOverlayView _gameStartOverlayView;
+        [SerializeField] private GameStatusTextView _gameStatusTextView;
+        [SerializeField] private ServerExceptionPopUpView _serverExceptionPopUpView;
+        [SerializeField] private WarPopUpView _warPopUpView;
+        
         public override void InstallBindings()
         {
             BindScenePresenters();
             BindLogic();
+            BindUI();
             Container.BindInterfacesAndSelfTo<GameSceneBootstrapper>().AsSingle().NonLazy();
         }
         
@@ -34,6 +41,24 @@ namespace Client.Scripts.Client
             Container.Bind<TableLayoutLogic>().AsSingle();
             Container.Bind<TurnAnimationLogic>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameFlowLogic>().AsSingle();
+        }
+
+        private void BindUI()
+        {
+            Container.Bind<GameOverPopUpView>().FromInstance(_gameOverPopUpView).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameOverPopUpPresenter>().AsSingle();
+            
+            Container.Bind<GameStartOverlayView>().FromInstance(_gameStartOverlayView).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameStartOverlayPresenter>().AsSingle();
+            
+            Container.Bind<GameStatusTextView>().FromInstance(_gameStatusTextView).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameStatusTextPresenter>().AsSingle();
+            
+            Container.Bind<ServerExceptionPopUpView>().FromInstance(_serverExceptionPopUpView).AsSingle();
+            Container.BindInterfacesAndSelfTo<ServerExceptionPopUpPresenter>().AsSingle();
+            
+            Container.Bind<WarPopUpView>().FromInstance(_warPopUpView).AsSingle();
+            Container.BindInterfacesAndSelfTo<WarPopUpPresenter>().AsSingle();
         }
     }
 }

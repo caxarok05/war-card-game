@@ -9,11 +9,19 @@ namespace Client.Scripts.Client
 {
     public sealed class GameFlowLogic : IInitializable, IDisposable
     {
+        public event Action<GameOutcomeType> OnGameOver;
+        public event Action<string> OnExceptionHappened;
+        public event Action OnInitializationStarted;
+        public event Action OnInitializationFinished;
+        public event Action<string> OnStatusTextChanged;
+        public event Action OnStatusTextHidden;
+        
         private readonly GameSessionLogic _gameSessionLogic;
         private readonly TurnRequestLogic _turnRequestLogic;
         private readonly TurnResolutionLogic _turnResolutionLogic;
         private readonly TurnAnimationLogic _turnAnimationLogic;
         private readonly GameBoardPresenter _gameBoardPresenter;
+        private readonly ConfigProvider _configProvider;
 
         private CancellationTokenSource _turnCancellation;
         
@@ -22,13 +30,15 @@ namespace Client.Scripts.Client
             TurnRequestLogic turnRequestLogic,
             TurnResolutionLogic turnResolutionLogic,
             TurnAnimationLogic turnAnimationLogic,
-            GameBoardPresenter gameBoardPresenter)
+            GameBoardPresenter gameBoardPresenter, 
+            ConfigProvider configProvider)
         {
             _gameSessionLogic = gameSessionLogic;
             _turnRequestLogic = turnRequestLogic;
             _turnResolutionLogic = turnResolutionLogic;
             _turnAnimationLogic = turnAnimationLogic;
             _gameBoardPresenter = gameBoardPresenter;
+            _configProvider = configProvider;
         }
 
         public void Initialize()
@@ -45,11 +55,12 @@ namespace Client.Scripts.Client
 
             _gameSessionLogic.BeginInitialization();
             _gameBoardPresenter.SetInputEnabled(false);
-
+ 
+            OnInitializationStarted?.Invoke();
+            OnStatusTextHidden?.Invoke();
+            
             try
             {
-                // TODO: Show game scene initialization/loading state in UI.
-
                 StartGameResponse response = await _turnRequestLogic.StartGameAsync(cancellationToken);
 
                 _gameBoardPresenter.UpdateDeckCounts(
@@ -58,18 +69,22 @@ namespace Client.Scripts.Client
 
                 _gameSessionLogic.CompleteInitialization();
 
-                // TODO: Show "Tap to draw" state in UI.
+                OnInitializationFinished?.Invoke();
+                OnStatusTextChanged?.Invoke(_configProvider.UIConfig.TapToDrawText);
             }
             catch (OperationCanceledException)
             {
                 _gameSessionLogic.CompleteTurn();
+
+                OnInitializationFinished?.Invoke();
             }
             catch (Exception exception)
             {
                 _gameSessionLogic.CompleteTurn();
                 Debug.LogException(exception);
-                
-                // TODO UI: Show initialization error state
+  
+                OnInitializationFinished?.Invoke();
+                OnExceptionHappened?.Invoke(_configProvider.UIConfig.InitalizeFailedText);
             }
             finally
             {
@@ -90,10 +105,10 @@ namespace Client.Scripts.Client
             _gameSessionLogic.BeginTurn();
             _gameBoardPresenter.SetInputEnabled(false);
 
+            OnStatusTextChanged?.Invoke(_configProvider.UIConfig.RequestingServerText);
+            
             try
             {
-                // TODO: Show request/loading state in UI.
-
                 DrawResponse response = await _turnRequestLogic.DrawAsync(cancellationToken);
                 ResolvedTurnData resolvedTurnData = _turnResolutionLogic.Resolve(response);
 
@@ -102,29 +117,33 @@ namespace Client.Scripts.Client
                 _gameBoardPresenter.UpdateDeckCounts(
                     response.PlayerTotalCardCount,
                     response.OpponentTotalCardCount);
-
+                
                 if (resolvedTurnData.IsGameOver)
                 {
                     _gameSessionLogic.CompleteGame();
 
-                    // TODO: Show game over UI with resolvedTurnData.GameOutcome.
+                    OnStatusTextHidden?.Invoke();
+                    OnGameOver?.Invoke(resolvedTurnData.GameOutcome);
                     return;
                 }
 
                 _gameSessionLogic.CompleteTurn();
 
-                // TODO: Show round result / war state in UI if needed.
+                OnStatusTextChanged?.Invoke(_configProvider.UIConfig.TapToDrawText);
             }
             catch (OperationCanceledException)
             {
                 _gameSessionLogic.CompleteTurn();
+
+                OnStatusTextChanged?.Invoke(_configProvider.UIConfig.TapToDrawText);
             }
             catch (Exception exception)
             {
                 _gameSessionLogic.CompleteTurn();
                 Debug.LogException(exception);
-                
-                // TODO UI: show request/server error popup
+
+                OnStatusTextHidden?.Invoke();
+                OnExceptionHappened?.Invoke(_configProvider.UIConfig.RequestFailedText);
             }
             finally
             {

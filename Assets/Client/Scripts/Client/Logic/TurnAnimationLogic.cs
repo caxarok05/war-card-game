@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Client.Scripts.Shared;
 using Cysharp.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace Client.Scripts.Client
             public int VisualIndex;
         }
 
+        public event Action OnWarHappened;
+        
         private readonly CustomPool<CardPresenter> _cardPool;
         private readonly GameBoardPresenter _gameBoardPresenter;
         private readonly TableLayoutLogic _tableLayoutLogic;
@@ -47,6 +50,7 @@ namespace Client.Scripts.Client
 
             if (resolvedTurnData.IsWar)
             {
+                OnWarHappened?.Invoke();
                 await PlayWarCameraPunchAsync(cancellationToken);
             }
 

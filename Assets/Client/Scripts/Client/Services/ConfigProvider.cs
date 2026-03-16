@@ -7,6 +7,7 @@ namespace Client.Scripts.Client
         [field: SerializeField] public BootstrapConfig BootstrapConfig { get; private set; }
         [field: SerializeField] public CardSpriteConfig CardSpriteConfig { get; private set; }
         [field: SerializeField] public AnimationConfig AnimationConfig { get; private set; }
+        [field: SerializeField] public UIConfig UIConfig { get; private set; }
 
     }
 }

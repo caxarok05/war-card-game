@@ -8,9 +8,11 @@ namespace Client.Scripts.Client
     public sealed class BootstrapConfig : ScriptableObject
     {
         [SerializeField] private string _gameSceneName = "GameScene";
+        [SerializeField] private string _bootstrapSceneName = "BootstrapScene";
         [SerializeField] private List<BootstrapStageData> _stages = new();
 
         public string GameSceneName => _gameSceneName;
+        public string BootstrapSceneName => _bootstrapSceneName;
         public IReadOnlyList<BootstrapStageData> Stages => _stages;
 
         public BootstrapStageData GetStageData(BootstrapStage stage)
